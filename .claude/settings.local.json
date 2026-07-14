@@ -20,7 +20,10 @@
       "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe -m pytest tests\\\\test_mock_provider.py tests\\\\test_adapters.py -q 2>$null)",
       "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe -m pip install -q openai asgi-lifespan)",
       "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe -m pytest tests\\\\test_proxy.py -q 2>$null)",
-      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe -m pytest tests -q 2>$null)"
+      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe -m pytest tests -q 2>$null)",
+      "PowerShell(docker pull -q redis:8)",
+      "PowerShell(docker pull -q postgres:16-alpine)",
+      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe -m pytest tests\\\\test_ratelimit_integration.py -q 2>$null)"
     ]
   }
 }
