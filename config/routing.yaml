@@ -1,7 +1,12 @@
 # Relay routing map (SPEC C6) — hot-reloaded on edit; no restart needed.
+# cache_threshold values are dev-tuned (scripts/eval_cache_traps.py, ADR-0009):
+# 0.755 maximizes (hit recall - false hits) on the 40 dev pairs with the
+# answer-determining guards active; 0.94 is the dev zero-false-hit point,
+# used for tier 2 where wrong answers cost more. Tier 3 semantic matching is
+# disabled outright (exact repeats still hit).
 tiers:
-  1: { chain: [mock/cheap-a, ollama/llama3.1-8b], cache_threshold: 0.90 }
-  2: { chain: [mock/mid-b, mock/cheap-a], cache_threshold: 0.95 }
+  1: { chain: [mock/cheap-a, ollama/llama3.1-8b], cache_threshold: 0.755 }
+  2: { chain: [mock/mid-b, mock/cheap-a], cache_threshold: 0.94 }
   3: { chain: [mock/top-c, mock/mid-b], cache_threshold: disabled }
 
 classifier:

@@ -23,7 +23,19 @@
       "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe -m pytest tests -q 2>$null)",
       "PowerShell(docker pull -q redis:8)",
       "PowerShell(docker pull -q postgres:16-alpine)",
-      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe -m pytest tests\\\\test_ratelimit_integration.py -q 2>$null)"
+      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe -m pytest tests\\\\test_ratelimit_integration.py -q 2>$null)",
+      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe \"C:\\\\Users\\\\nisha\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-nisha-Desktop-Project-relay\\\\277820c0-0fcb-4b02-a475-3d8338809eac\\\\scratchpad\\\\inspect_traps.py\")",
+      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe \"C:\\\\Users\\\\nisha\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-nisha-Desktop-Project-relay\\\\277820c0-0fcb-4b02-a475-3d8338809eac\\\\scratchpad\\\\inspect_cache_class.py\")",
+      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe scripts\\\\eval_cache_traps.py)",
+      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe \"C:\\\\Users\\\\nisha\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-nisha-Desktop-Project-relay\\\\277820c0-0fcb-4b02-a475-3d8338809eac\\\\scratchpad\\\\emb_sanity.py\")",
+      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe \"C:\\\\Users\\\\nisha\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-nisha-Desktop-Project-relay\\\\277820c0-0fcb-4b02-a475-3d8338809eac\\\\scratchpad\\\\dist_check.py\")",
+      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe \"C:\\\\Users\\\\nisha\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-nisha-Desktop-Project-relay\\\\277820c0-0fcb-4b02-a475-3d8338809eac\\\\scratchpad\\\\guard_dev_eval.py\")",
+      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe -c \"import sys; sys.path.insert\\(0, r'C:\\\\Users\\\\nisha\\\\Desktop\\\\Project\\\\relay'\\); from gateway.cache.guards import _direction_pairs, answer_determining_conflict; a='Convert 20 Celsius to Fahrenheit.'; b='Convert 20 Fahrenheit to Celsius.'; print\\(_direction_pairs\\(a\\), _direction_pairs\\(b\\)\\); print\\(answer_determining_conflict\\(a,b\\)\\)\")",
+      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe -c \"import json; rows=[json.loads\\(l\\) for l in open\\('datasets/cache_traps.jsonl', encoding='utf-8'\\)]; r=[x for x in rows if x['id']=='cache-miss-002'][0]; print\\(r['id'], r['phenomena'], r['review_flags']\\); print\\('A:', r['prompt_a']\\); print\\('B:', r['prompt_b']\\)\")",
+      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe \"C:\\\\Users\\\\nisha\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-nisha-Desktop-Project-relay\\\\277820c0-0fcb-4b02-a475-3d8338809eac\\\\scratchpad\\\\ttl_agreement.py\")",
+      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe -m pytest tests\\\\test_cache_unit.py -q 2>$null)",
+      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe -m pytest tests\\\\test_cache_integration.py -q 2>$null)",
+      "PowerShell(git commit -q -F \"C:\\\\Users\\\\nisha\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-nisha-Desktop-Project-relay\\\\277820c0-0fcb-4b02-a475-3d8338809eac\\\\scratchpad\\\\commit_c5.txt\")"
     ]
   }
 }

@@ -71,6 +71,7 @@ def create_app() -> FastAPI:
     app = FastAPI(title="relay-mock-provider")
     chaos = ChaosConfig()
     app.state.chaos = chaos
+    app.state.chat_calls = 0  # upstream-call counter (singleflight tests read this)
 
     def _chaos_gate(rng: random.Random) -> Response | None:
         if chaos.hard_down:
@@ -124,6 +125,7 @@ def create_app() -> FastAPI:
 
     @app.post("/v1/chat/completions")
     async def chat(request: Request) -> Response:
+        app.state.chat_calls += 1
         body = await request.json()
         model = body.get("model", "cheap-a")
         rng = random.Random()  # chaos draws are random; content is not
