@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-Content datasets\\\\cache_traps.jsonl -TotalCount 2; Write-Host '---'; Get-Content datasets\\\\complexity_labels.jsonl -TotalCount 2; Write-Host '---'; \\(Get-Content datasets\\\\cache_traps.jsonl | Measure-Object -Line\\).Lines; \\(Get-Content datasets\\\\complexity_labels.jsonl | Measure-Object -Line\\).Lines)",
+      "PowerShell(python --version)",
+      "PowerShell(docker --version)",
+      "PowerShell(docker info --format '{{.ServerVersion}}')",
+      "PowerShell(python -m venv .venv)",
+      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe -m pip install --upgrade pip -q)",
+      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe -m pip install -q numpy scikit-learn pytest pytest-asyncio fastapi \"uvicorn[standard]\" httpx pydantic pydantic-settings redis fastembed sqlalchemy asyncpg alembic psycopg2-binary prometheus-client opentelemetry-sdk opentelemetry-api watchfiles pyyaml locust testcontainers ruff mypy orjson)",
+      "PowerShell(git add datasets/cache_traps.jsonl datasets/complexity_labels.jsonl datasets/TIERING_RUBRIC.md)",
+      "PowerShell(git tag relay-datasets-v1.1.0)",
+      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe \"C:\\\\Users\\\\nisha\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-nisha-Desktop-Project-relay\\\\277820c0-0fcb-4b02-a475-3d8338809eac\\\\scratchpad\\\\baseline_probe.py\")",
+      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe scripts\\\\validate_datasets.py)",
+      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe scripts\\\\split_complexity_dataset.py)",
+      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe scripts\\\\length_baseline.py)",
+      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe -m pip install -q -e .)",
+      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe -m pytest -q 2>$null)",
+      "PowerShell(git add -A)"
+    ]
+  }
+}

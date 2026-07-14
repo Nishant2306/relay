@@ -1,0 +1,7 @@
+# Frozen datasets must stay byte-identical — never normalize line endings.
+datasets/* -text
+
+# Everything else: normalize to LF in the repo.
+* text=auto eol=lf
+*.png binary
+*.onnx binary

@@ -1,0 +1,68 @@
+name: ci
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+
+jobs:
+  dataset-immutability:
+    # datasets/* is frozen at relay-datasets-v1.1.0. Any PR touching it must
+    # bump the version in TIERING_RUBRIC.md.
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Fail if datasets changed without a version bump
+        run: |
+          BASE="${{ github.event.pull_request.base.sha }}"
+          CHANGED=$(git diff --name-only "$BASE"...HEAD -- datasets/ | wc -l)
+          if [ "$CHANGED" -gt 0 ]; then
+            if git diff "$BASE"...HEAD -- datasets/TIERING_RUBRIC.md | grep -q '^+.*Dataset version'; then
+              echo "datasets/ changed WITH a version bump — allowed."
+            else
+              echo "::error::datasets/* is frozen (relay-datasets-v1.1.0). Changes require a version bump in TIERING_RUBRIC.md."
+              exit 1
+            fi
+          fi
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install
+        run: |
+          python -m pip install -U pip
+          pip install -e ".[dev]"
+      - name: Lint
+        run: ruff check .
+      - name: Type-check
+        run: mypy gateway verifier mockprovider admin
+      - name: Dataset contracts + length-control release gate
+        run: |
+          python scripts/validate_datasets.py
+          python scripts/split_complexity_dataset.py
+          python scripts/length_baseline.py
+      - name: Unit tests
+        run: pytest -m "not integration and not slow" -q
+
+  integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install
+        run: |
+          python -m pip install -U pip
+          pip install -e ".[dev]"
+      - name: Integration tests (testcontainers Redis Stack + Postgres)
+        run: pytest -m "integration" -q
