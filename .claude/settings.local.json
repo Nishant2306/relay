@@ -35,7 +35,12 @@
       "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe \"C:\\\\Users\\\\nisha\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-nisha-Desktop-Project-relay\\\\277820c0-0fcb-4b02-a475-3d8338809eac\\\\scratchpad\\\\ttl_agreement.py\")",
       "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe -m pytest tests\\\\test_cache_unit.py -q 2>$null)",
       "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe -m pytest tests\\\\test_cache_integration.py -q 2>$null)",
-      "PowerShell(git commit -q -F \"C:\\\\Users\\\\nisha\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-nisha-Desktop-Project-relay\\\\277820c0-0fcb-4b02-a475-3d8338809eac\\\\scratchpad\\\\commit_c5.txt\")"
+      "PowerShell(git commit -q -F \"C:\\\\Users\\\\nisha\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-nisha-Desktop-Project-relay\\\\277820c0-0fcb-4b02-a475-3d8338809eac\\\\scratchpad\\\\commit_c5.txt\")",
+      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe -m pip install -q joblib)",
+      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe scripts\\\\train_classifier.py)",
+      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe \"C:\\\\Users\\\\nisha\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-nisha-Desktop-Project-relay\\\\277820c0-0fcb-4b02-a475-3d8338809eac\\\\scratchpad\\\\dev_errors.py\")",
+      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe \"C:\\\\Users\\\\nisha\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-nisha-Desktop-Project-relay\\\\277820c0-0fcb-4b02-a475-3d8338809eac\\\\scratchpad\\\\ablation.py\")",
+      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe -m pytest tests\\\\test_router.py -q 2>$null)"
     ]
   }
 }
