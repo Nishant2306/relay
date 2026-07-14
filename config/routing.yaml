@@ -1,0 +1,19 @@
+# Relay routing map (SPEC C6) — hot-reloaded on edit; no restart needed.
+tiers:
+  1: { chain: [mock/cheap-a, ollama/llama3.1-8b], cache_threshold: 0.90 }
+  2: { chain: [mock/mid-b, mock/cheap-a], cache_threshold: 0.95 }
+  3: { chain: [mock/top-c, mock/mid-b], cache_threshold: disabled }
+
+classifier:
+  min_confidence: 0.6
+  on_low_confidence: promote_one_tier
+
+verification:
+  sample_rate: 0.15
+  judge: mock/top-c
+  agree_threshold: 4
+
+cache_ttl:
+  stable: 86400
+  temporal: 3600
+  no_cache: 0

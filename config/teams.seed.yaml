@@ -1,0 +1,33 @@
+# Demo teams for local development and load testing.
+# API keys are PLAINTEXT here for local seeding only — never commit real keys.
+teams:
+  - name: demo
+    api_key: relay-demo-key
+    plan: dev
+    rpm: 120
+    tpm: 200000
+    daily_budget_usd: 10.0
+    monthly_budget_usd: 100.0
+    allowed_models: ["*"]
+    cache_scope: team
+
+  - name: loadtest
+    api_key: relay-loadtest-key
+    plan: loadtest
+    rpm: 6000
+    tpm: 5000000
+    daily_budget_usd: 1000.0
+    monthly_budget_usd: 10000.0
+    allowed_models: ["*"]
+    cache_scope: team
+
+  - name: stormy
+    # deliberately tiny limits — the rate-limit storm scenario hammers this team
+    api_key: relay-stormy-key
+    plan: dev
+    rpm: 60
+    tpm: 60000
+    daily_budget_usd: 0.50
+    monthly_budget_usd: 5.0
+    allowed_models: ["mock/cheap-a", "mock/mid-b", "mock/top-c", "relay-auto"]
+    cache_scope: team

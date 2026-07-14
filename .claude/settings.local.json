@@ -17,7 +17,10 @@
       "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe -m pip install -q -e .)",
       "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe -m pytest -q 2>$null)",
       "PowerShell(git add -A)",
-      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe -m pytest tests\\\\test_mock_provider.py tests\\\\test_adapters.py -q 2>$null)"
+      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe -m pytest tests\\\\test_mock_provider.py tests\\\\test_adapters.py -q 2>$null)",
+      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe -m pip install -q openai asgi-lifespan)",
+      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe -m pytest tests\\\\test_proxy.py -q 2>$null)",
+      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe -m pytest tests -q 2>$null)"
     ]
   }
 }
