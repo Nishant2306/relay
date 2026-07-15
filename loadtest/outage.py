@@ -19,7 +19,7 @@ import gevent
 import httpx
 from locust import HttpUser, between, events, task
 
-from loadtest.common import DEMO_KEY, RESULTS_DIR, chat_body, headers, load_corpus
+from loadtest.common import LOADTEST_KEY, RESULTS_DIR, chat_body, headers, load_corpus
 
 MOCK_ADMIN = os.environ.get("MOCK_PROVIDER_URL", "http://localhost:8100")
 OUTAGE_START_S = 30
@@ -54,7 +54,7 @@ class OutageUser(HttpUser):
         row = random.choice(corpus["unique"])
         with self.client.post(
             "/v1/chat/completions", json=chat_body(row["prompt"]),
-            headers=headers(DEMO_KEY), name="chat[outage]", catch_response=True,
+            headers=headers(LOADTEST_KEY), name="chat[outage]", catch_response=True,
         ) as resp:
             if resp.status_code == 200:
                 counts["ok"] += 1

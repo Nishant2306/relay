@@ -7,7 +7,6 @@ endpoint so invalid YAML is rejected with a precise error, never applied.
 
 from __future__ import annotations
 
-import asyncio
 import logging
 from pathlib import Path
 from typing import Any, Literal

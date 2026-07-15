@@ -22,7 +22,7 @@ from fastapi.responses import JSONResponse
 from gateway.config import Settings, settings
 from gateway.middleware.auth import TeamStore, authenticate, check_model_allowed
 from gateway.models import ChatCompletionRequest, TeamContext
-from gateway.obs.logging import NullRequestLogger, RequestLogger
+from gateway.obs.logging import RequestLogger
 from gateway.pipeline import AUTO_MODELS, Pipeline
 from gateway.registry import ProviderRegistry
 
@@ -96,16 +96,17 @@ def build_production_deps(cfg: Settings) -> Deps:
 
 
 def create_app(deps: Deps | None = None) -> FastAPI:
-    production = deps is None
-    if production:
+    if deps is None:
         from gateway.bootstrap import attach_runtime_components
         from gateway.obs.otel import setup_tracing
 
         setup_tracing()
         deps = build_production_deps(settings)
         attach_runtime_components(deps, settings)
+    assert deps is not None
     if deps.pipeline is None:
         deps.pipeline = Pipeline(deps.registry, deps.request_logger)
+    pipeline_ref: Pipeline = deps.pipeline
 
     @asynccontextmanager
     async def lifespan(app: FastAPI):
@@ -119,7 +120,7 @@ def create_app(deps: Deps | None = None) -> FastAPI:
         try:
             yield
         finally:
-            await deps.pipeline.drain()
+            await pipeline_ref.drain()
             for task in deps.background_tasks:
                 task.cancel()
             if deps.http_client is not None:

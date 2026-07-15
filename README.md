@@ -44,11 +44,15 @@ gaps).
 | Metric | Result | Protocol |
 |---|---|---|
 | Semantic-cache paraphrase hit rate | **95.0%** | 80 held-out human-adjudicated pairs; threshold + guards tuned on the 40 dev pairs only (ADR-0009) |
-| Trap false-hit rate | **2.5%** (1/40) | same held-out split — honest and non-zero; the survivor is a multi-token entity swap (`AWS`→`Google Cloud`) |
-| Under production routing (live gateway replay) | hit 92.5%, false-hit 2.5% | per-tier thresholds active, tier-3 semantic matching disabled |
+| Trap false-hit rate (offline) | **2.5%** (1/40) | same held-out split — honest and non-zero; the survivor is a multi-token entity swap (`AWS`→`Google Cloud`) |
+| Trap replay against the live gateway | hit 95.0% (38/40), false-hit 5.0% (2/40) | production routing active; adds one cross-pair KNN collision to the offline survivor |
+| Steady load (50% unique / 30% repeat / 20% paraphrase) | **~40 RPS, zero failures, 82.9% hit rate** (2,513 exact / 2,403 semantic) | 120 s Locust run vs the chaos mock |
+| Repeat-heavy convergence | hit rate converges to **96%** | 25-prompt hot set, 90 s |
 | Classifier accuracy | **61.9%** vs **46.0%** length-only control (+15.9 pp) | group-aware frozen split, test fold evaluated once; all confusions adjacent-tier, zero 1↔3 |
 | Gateway overhead (exact cache hit) | **~4 ms** end-to-end | live demo measurement; p50/p95/p99 under load via `make harvest` |
+| Rate-limit storm | 1,618 clean 429s, **100% with Retry-After**; innocent team on the same gateway: **zero 429s** | one team at 5× its 60 RPM limit |
 | Rate-limit correctness | 120-burst at 60 RPM → ~60 accepted; 50 parallel clients, zero over-admission | property test vs real Redis (testcontainers) |
+| Budget exhaustion | 274 requests served → cap hit → 526 clean `budget_exhausted` blocks | $0.25 daily cap, cache disabled, Slack warn at 80% |
 | Outage drill | **zero client-visible 5xx** during a 3-minute primary-provider kill | `make drill`: breaker opens, chain falls back to the alternate provider, auto-recovers |
 | Singleflight | 10 concurrent identical misses → **1 upstream call** | integration test vs real Redis |
 | Savings vs flagship | reported by `make harvest`, attributed **cache vs routing separately** (ADR-0008) | counterfactual = every request priced at gpt-4o rates |
@@ -83,7 +87,10 @@ The flagged `known_hard_embedding_case` pair (`safe`/`unsafe`, similarity
   are not represented. The demo path works against Ollama/OpenAI/Anthropic
   adapters, but no headline number was measured there.
 - **Multi-token entity swaps beat the guards** (`AWS`→`Google Cloud`): the
-  1/40 held-out false hit. A named-entity comparison layer is the v2 answer.
+  1/40 offline held-out false hit. A named-entity comparison layer is the v2
+  answer. Live replay adds a second failure mode: **cross-pair KNN
+  collisions** — guards check only the top-1 neighbor, so a query can match a
+  *different* cached prompt that happens to pass the guards (2/40 = 5% live).
 - **Guards are English-centric** regex/lexicon logic.
 - **Single Redis is a SPOF** — buckets, cache, vector index, locks, and the
   verify queue all live in one instance. Hardening path: Redis Cluster or

@@ -51,8 +51,14 @@ extend-exclude = [".venv", "datasets"]
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
 
+[tool.ruff.lint.per-file-ignores]
+# B008: Depends(...) in argument defaults is the FastAPI idiom
+"gateway/main.py" = ["B008"]
+"admin/api.py" = ["B008"]
+
 [tool.mypy]
 python_version = "3.11"
+plugins = ["pydantic.mypy"]
 ignore_missing_imports = true
 check_untyped_defs = true
 no_implicit_optional = true

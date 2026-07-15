@@ -54,8 +54,11 @@ class InMemoryVerifyQueue:
 
 
 class VerifierSampler:
-    """Pipeline-side (implements the VerifierQueue protocol in pipeline.py):
-    sample tier-1/2 responses at verification.sample_rate."""
+    """Pipeline-side (implements the VerifierQueue protocol in pipeline.py).
+
+    The pipeline calls `should_sample(tier)` BEFORE writing the request_log
+    row so `verified='pending'` is only ever set on rows that actually get
+    enqueued — otherwise unsampled rows would sit pending forever."""
 
     def __init__(self, queue: VerifyQueue, sample_rate=lambda: 0.15,
                  rng: random.Random | None = None):
@@ -63,12 +66,11 @@ class VerifierSampler:
         self.sample_rate = sample_rate
         self.rng = rng or random.Random()
 
-    async def maybe_enqueue(self, request: ChatCompletionRequest, result: AdapterResult,
-                            tier: int | None, request_log_id: int | None) -> None:
-        if tier not in (1, 2):
-            return
-        if self.rng.random() >= self.sample_rate():
-            return
+    def should_sample(self, tier: int | None) -> bool:
+        return tier in (1, 2) and self.rng.random() < self.sample_rate()
+
+    async def enqueue(self, request: ChatCompletionRequest, result: AdapterResult,
+                      tier: int | None, request_log_id: int | None) -> None:
         content = ""
         if result.response.get("choices"):
             content = result.response["choices"][0].get("message", {}).get("content", "") or ""

@@ -21,6 +21,17 @@ teams:
     allowed_models: ["*"]
     cache_scope: team
 
+  - name: spendy
+    # high RPM, tiny budget — the budget-exhaustion scenario burns this team
+    api_key: relay-spendy-key
+    plan: dev
+    rpm: 3000
+    tpm: 5000000
+    daily_budget_usd: 0.25
+    monthly_budget_usd: 10.0
+    allowed_models: ["*"]
+    cache_scope: "off"   # quoted — bare `off` is YAML for False. Cache disabled so every request pays and the budget depletes deterministically
+
   - name: stormy
     # deliberately tiny limits — the rate-limit storm scenario hammers this team
     api_key: relay-stormy-key

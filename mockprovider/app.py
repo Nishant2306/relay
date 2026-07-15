@@ -15,7 +15,8 @@ import hashlib
 import json
 import random
 import time
-from typing import Any, AsyncIterator
+from collections.abc import AsyncIterator
+from typing import Any
 
 from fastapi import FastAPI, Request, Response
 from fastapi.responses import JSONResponse, StreamingResponse
@@ -49,7 +50,9 @@ def _conversation_text(body: dict[str, Any]) -> str:
         content = m.get("content")
         if isinstance(content, list):
             content = " ".join(
-                p.get("text", "") for p in content if isinstance(p, dict) and p.get("type") == "text"
+                p.get("text", "")
+                for p in content
+                if isinstance(p, dict) and p.get("type") == "text"
             )
         parts.append(f"{m.get('role')}:{content}")
     return "\n".join(parts)

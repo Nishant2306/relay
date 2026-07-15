@@ -13,10 +13,13 @@ htmlcov/
 # Environment / secrets
 .env
 
-# Artifacts
-results/
+# Artifacts (regenerable; the two committed exceptions are load-bearing:
+# the frozen headline eval record and the runtime input of /admin/cache/tuning)
+results/*
+!results/cache_trap_eval.json
 models/*.joblib
 models/*.json
+!models/trap_dev_curve.json
 !models/.gitkeep
 .fastembed_cache/
 *.onnx

@@ -50,22 +50,19 @@ class TestSampler:
     async def test_only_tiers_1_and_2_and_rate(self):
         queue = InMemoryVerifyQueue()
         sampler = VerifierSampler(queue, sample_rate=lambda: 1.0, rng=random.Random(7))
-        await sampler.maybe_enqueue(request_for("p"), adapter_result("a"), tier=3,
-                                    request_log_id=1)
-        assert await queue.pop(timeout_s=0.05) is None  # tier 3 never sampled
-        await sampler.maybe_enqueue(request_for("p"), adapter_result("a"), tier=1,
-                                    request_log_id=2)
+        assert not sampler.should_sample(3)  # tier 3 never sampled
+        assert not sampler.should_sample(None)
+        assert sampler.should_sample(1)
+        await sampler.enqueue(request_for("p"), adapter_result("a"), tier=1,
+                              request_log_id=2)
         item = await queue.pop(timeout_s=0.5)
         assert item is not None and item["log_id"] == 2 and item["tier"] == 1
         assert item["model_served"] == "mock/cheap-a"
 
     async def test_zero_rate_never_samples(self):
-        queue = InMemoryVerifyQueue()
-        sampler = VerifierSampler(queue, sample_rate=lambda: 0.0, rng=random.Random(7))
-        for i in range(50):
-            await sampler.maybe_enqueue(request_for("p"), adapter_result("a"), tier=1,
-                                        request_log_id=i)
-        assert await queue.pop(timeout_s=0.05) is None
+        sampler = VerifierSampler(InMemoryVerifyQueue(), sample_rate=lambda: 0.0,
+                                  rng=random.Random(7))
+        assert not any(sampler.should_sample(1) for _ in range(100))
 
 
 class TestWorker:

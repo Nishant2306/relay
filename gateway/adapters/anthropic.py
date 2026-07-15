@@ -82,7 +82,9 @@ class AnthropicAdapter(ProviderAdapter):
 
         latency_ms = int((time.perf_counter() - started) * 1000)
         body = resp.json()
-        content = "".join(b.get("text", "") for b in body.get("content", []) if b.get("type") == "text")
+        content = "".join(
+            b.get("text", "") for b in body.get("content", []) if b.get("type") == "text"
+        )
         usage = Usage(
             prompt_tokens=body.get("usage", {}).get("input_tokens", 0),
             completion_tokens=body.get("usage", {}).get("output_tokens", 0),

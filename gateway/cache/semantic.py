@@ -34,7 +34,7 @@ class VectorIndex:
         try:
             await self.redis.ft(INDEX_NAME).info()
         except Exception:
-            schema = (
+            schema = [
                 TagField("ns"),
                 TagField("model_key"),
                 VectorField(
@@ -48,7 +48,7 @@ class VectorIndex:
                         "EF_CONSTRUCTION": 200,
                     },
                 ),
-            )
+            ]
             definition = IndexDefinition(prefix=[VECTOR_PREFIX], index_type=IndexType.HASH)
             await self.redis.ft(INDEX_NAME).create_index(schema, definition=definition)
 

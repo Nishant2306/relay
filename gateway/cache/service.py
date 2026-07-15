@@ -192,7 +192,7 @@ class SemanticCache:
             }
             await self.exact.set(ns, ek, entry, ttl_s)
             vec = await self._embedding_for(ek, prompt)
-            await self.index.add(ns, ek, vec, entry["model_key"], ttl_s)
+            await self.index.add(ns, ek, vec, str(entry["model_key"]), ttl_s)
         finally:
             await self.singleflight.release(ns, ek)
 

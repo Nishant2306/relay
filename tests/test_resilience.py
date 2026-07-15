@@ -270,6 +270,7 @@ class TestResilientCaller:
             ["mock/cheap-a", "mock/mid-b"], request_for("stream me")
         )
         chunks = [c async for c in aiter]
+        assert chunks
         assert meta.model_key == "mock/mid-b" and meta.fallback_used
         assert collector.complete()
         assert collector.content

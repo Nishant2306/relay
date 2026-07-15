@@ -13,6 +13,7 @@ RESULTS_DIR = Path(__file__).resolve().parent.parent / "results"
 
 LOADTEST_KEY = os.environ.get("RELAY_LOADTEST_KEY", "relay-loadtest-key")
 STORMY_KEY = os.environ.get("RELAY_STORMY_KEY", "relay-stormy-key")
+SPENDY_KEY = os.environ.get("RELAY_SPENDY_KEY", "relay-spendy-key")
 DEMO_KEY = os.environ.get("RELAY_DEMO_KEY", "relay-demo-key")
 
 RNG = random.Random(1234)

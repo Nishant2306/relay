@@ -40,6 +40,7 @@ def attach_runtime_components(deps: Deps, cfg: Settings) -> None:
     cache = SemanticCache(deps.redis, thresholds=store.thresholds,
                           ttl_config=store.ttl_config)
 
+    classifier: ComplexityClassifier | HeuristicClassifier
     try:
         classifier = ComplexityClassifier()
         logger.info("loaded trained complexity classifier")

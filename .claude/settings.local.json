@@ -61,7 +61,16 @@
       "PowerShell(docker compose logs gateway --tail 30)",
       "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe scripts\\\\build_loadtest_corpus.py)",
       "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe scripts\\\\run_loadtest.py steady)",
-      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe -c \"import json; rows=[json.loads\\(l\\) for l in open\\('datasets/cache_traps.jsonl', encoding='utf-8'\\)]; r=[x for x in rows if x['id']=='cache-miss-050'][0]; print\\(r['phenomena']\\); print\\('A:', r['prompt_a']\\); print\\('B:', r['prompt_b']\\)\")"
+      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe -c \"import json; rows=[json.loads\\(l\\) for l in open\\('datasets/cache_traps.jsonl', encoding='utf-8'\\)]; r=[x for x in rows if x['id']=='cache-miss-050'][0]; print\\(r['phenomena']\\); print\\('A:', r['prompt_a']\\); print\\('B:', r['prompt_b']\\)\")",
+      "PowerShell(docker exec relay-redis-1 redis-cli FLUSHDB)",
+      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe scripts\\\\run_loadtest.py steady repeats storm budget)",
+      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe -m ruff check . 2>&1)",
+      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe -m ruff check --fix . 2>&1)",
+      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe -m ruff check . --output-format concise 2>&1)",
+      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe -m ruff check .)",
+      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe -m mypy gateway verifier mockprovider admin 2>&1)",
+      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe scripts\\\\seed_teams.py)",
+      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe scripts\\\\run_loadtest.py budget 2>&1)"
     ]
   }
 }

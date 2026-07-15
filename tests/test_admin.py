@@ -132,7 +132,6 @@ class TestCacheAdmin:
 class TestMetricsEndpoint:
     async def test_metrics_exposed(self, admin_harness):
         client, *_ = admin_harness
-        from gateway.obs.metrics import RelayMetrics
 
         # not wired in this harness -> placeholder; wire one and check export
         r = await client.get("/metrics")

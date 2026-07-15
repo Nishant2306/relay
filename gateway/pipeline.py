@@ -110,8 +110,10 @@ class Caller(Protocol):
 
 
 class VerifierQueue(Protocol):
-    async def maybe_enqueue(self, request: ChatCompletionRequest, result: AdapterResult,
-                            tier: int | None, request_log_id: int | None) -> None: ...
+    def should_sample(self, tier: int | None) -> bool: ...
+
+    async def enqueue(self, request: ChatCompletionRequest, result: AdapterResult,
+                      tier: int | None, request_log_id: int | None) -> None: ...
 
 
 class DirectCaller:
@@ -351,6 +353,9 @@ class Pipeline:
             )
             if meta.fallback_used and chain:
                 self.metrics.fallback(chain[0], meta.model_key)
+        will_verify = (
+            self.verifier_queue is not None and self.verifier_queue.should_sample(tier)
+        )
         log_id = await self.request_logger.log(RequestLogEntry(
             team_id=team.team_id, model_requested=request.model, model_served=meta.model_key,
             provider=result.provider, tier=tier, cache="miss",
@@ -359,7 +364,7 @@ class Pipeline:
             latency_ms=result.latency_ms, overhead_ms=overhead_ms, status=200,
             retries=meta.retries, fallback_used=meta.fallback_used,
             breaker_open=meta.breaker_open,
-            verified="pending" if (self.verifier_queue and tier in (1, 2)) else None,
+            verified="pending" if will_verify else None,
         ))
         # [10] cache write — complete successful responses only (ADR-0006)
         if self.cache is not None and team.cache_scope != "off" \
@@ -368,10 +373,10 @@ class Pipeline:
                 await self.cache.write(request, team, result, tier)
             except Exception:
                 logger.exception("cache write failed")
-        # [9] verification sampling
-        if self.verifier_queue is not None and tier in (1, 2):
+        # [9] verification sampling (decision made above, before the log write)
+        if will_verify and self.verifier_queue is not None:
             try:
-                await self.verifier_queue.maybe_enqueue(request, result, tier, log_id)
+                await self.verifier_queue.enqueue(request, result, tier, log_id)
             except Exception:
                 logger.exception("verifier enqueue failed")
 

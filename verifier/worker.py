@@ -46,7 +46,9 @@ class VerifierWorker:
         """Returns the verdict ('agree' | 'disagree')."""
         top_key = self.top_model_key()
         adapter, top_model = self.registry.resolve(top_key)
-        shadow_request = ChatCompletionRequest(model=top_key, messages=item["messages"])
+        shadow_request = ChatCompletionRequest.model_validate(
+            {"model": top_key, "messages": item["messages"]}
+        )
         shadow = await adapter.chat(shadow_request, top_model)
         top_answer = ""
         if shadow.response.get("choices"):

@@ -87,7 +87,7 @@ def openai_response(
     content: str,
     prompt_tokens: int,
     completion_tokens: int,
-    finish_reason: Literal["stop", "length"] = "stop",
+    finish_reason: str = "stop",
 ) -> dict[str, Any]:
     """Build a byte-shape-compatible chat.completion body."""
     return {

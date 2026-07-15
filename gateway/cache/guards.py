@@ -150,7 +150,7 @@ def _equivalent_tokens(x: str, y: str) -> bool:
     if _NUMERIC_RE.match(x) and _NUMERIC_RE.match(y):
         return True
     prefix = 0
-    for cx, cy in zip(x, y):
+    for cx, cy in zip(x, y, strict=False):
         if cx != cy:
             break
         prefix += 1
@@ -183,7 +183,7 @@ def _substitution_conflict(query: str, candidate: str) -> str | None:
     if not substitutions or sum(len(a) for a, _ in substitutions) > 3:
         return None
     for q_span, c_span in substitutions:
-        for x, y in zip(q_span, c_span):
+        for x, y in zip(q_span, c_span, strict=True):
             if not _equivalent_tokens(x, y):
                 return f"content_substitution:{x}/{y}"
     return None

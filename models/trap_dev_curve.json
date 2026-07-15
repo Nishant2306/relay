@@ -1,0 +1,242 @@
+{
+  "0.700": {
+    "hit_rate": 0.95,
+    "false_hit_rate": 0.05
+  },
+  "0.705": {
+    "hit_rate": 0.95,
+    "false_hit_rate": 0.05
+  },
+  "0.710": {
+    "hit_rate": 0.95,
+    "false_hit_rate": 0.05
+  },
+  "0.715": {
+    "hit_rate": 0.95,
+    "false_hit_rate": 0.05
+  },
+  "0.720": {
+    "hit_rate": 0.95,
+    "false_hit_rate": 0.05
+  },
+  "0.725": {
+    "hit_rate": 0.95,
+    "false_hit_rate": 0.05
+  },
+  "0.730": {
+    "hit_rate": 0.95,
+    "false_hit_rate": 0.05
+  },
+  "0.735": {
+    "hit_rate": 0.95,
+    "false_hit_rate": 0.05
+  },
+  "0.740": {
+    "hit_rate": 0.95,
+    "false_hit_rate": 0.05
+  },
+  "0.745": {
+    "hit_rate": 0.95,
+    "false_hit_rate": 0.05
+  },
+  "0.750": {
+    "hit_rate": 0.95,
+    "false_hit_rate": 0.05
+  },
+  "0.755": {
+    "hit_rate": 0.95,
+    "false_hit_rate": 0.05
+  },
+  "0.760": {
+    "hit_rate": 0.9,
+    "false_hit_rate": 0.05
+  },
+  "0.765": {
+    "hit_rate": 0.9,
+    "false_hit_rate": 0.05
+  },
+  "0.770": {
+    "hit_rate": 0.9,
+    "false_hit_rate": 0.05
+  },
+  "0.775": {
+    "hit_rate": 0.9,
+    "false_hit_rate": 0.05
+  },
+  "0.780": {
+    "hit_rate": 0.9,
+    "false_hit_rate": 0.05
+  },
+  "0.785": {
+    "hit_rate": 0.9,
+    "false_hit_rate": 0.05
+  },
+  "0.790": {
+    "hit_rate": 0.9,
+    "false_hit_rate": 0.05
+  },
+  "0.795": {
+    "hit_rate": 0.9,
+    "false_hit_rate": 0.05
+  },
+  "0.800": {
+    "hit_rate": 0.9,
+    "false_hit_rate": 0.05
+  },
+  "0.805": {
+    "hit_rate": 0.9,
+    "false_hit_rate": 0.05
+  },
+  "0.810": {
+    "hit_rate": 0.85,
+    "false_hit_rate": 0.05
+  },
+  "0.815": {
+    "hit_rate": 0.85,
+    "false_hit_rate": 0.05
+  },
+  "0.820": {
+    "hit_rate": 0.85,
+    "false_hit_rate": 0.05
+  },
+  "0.825": {
+    "hit_rate": 0.85,
+    "false_hit_rate": 0.05
+  },
+  "0.830": {
+    "hit_rate": 0.8,
+    "false_hit_rate": 0.05
+  },
+  "0.835": {
+    "hit_rate": 0.8,
+    "false_hit_rate": 0.05
+  },
+  "0.840": {
+    "hit_rate": 0.8,
+    "false_hit_rate": 0.05
+  },
+  "0.845": {
+    "hit_rate": 0.75,
+    "false_hit_rate": 0.05
+  },
+  "0.850": {
+    "hit_rate": 0.75,
+    "false_hit_rate": 0.05
+  },
+  "0.855": {
+    "hit_rate": 0.75,
+    "false_hit_rate": 0.05
+  },
+  "0.860": {
+    "hit_rate": 0.7,
+    "false_hit_rate": 0.05
+  },
+  "0.865": {
+    "hit_rate": 0.7,
+    "false_hit_rate": 0.05
+  },
+  "0.870": {
+    "hit_rate": 0.7,
+    "false_hit_rate": 0.05
+  },
+  "0.875": {
+    "hit_rate": 0.7,
+    "false_hit_rate": 0.05
+  },
+  "0.880": {
+    "hit_rate": 0.6,
+    "false_hit_rate": 0.05
+  },
+  "0.885": {
+    "hit_rate": 0.6,
+    "false_hit_rate": 0.05
+  },
+  "0.890": {
+    "hit_rate": 0.55,
+    "false_hit_rate": 0.05
+  },
+  "0.895": {
+    "hit_rate": 0.55,
+    "false_hit_rate": 0.05
+  },
+  "0.900": {
+    "hit_rate": 0.5,
+    "false_hit_rate": 0.05
+  },
+  "0.905": {
+    "hit_rate": 0.5,
+    "false_hit_rate": 0.05
+  },
+  "0.910": {
+    "hit_rate": 0.45,
+    "false_hit_rate": 0.05
+  },
+  "0.915": {
+    "hit_rate": 0.4,
+    "false_hit_rate": 0.05
+  },
+  "0.920": {
+    "hit_rate": 0.4,
+    "false_hit_rate": 0.05
+  },
+  "0.925": {
+    "hit_rate": 0.4,
+    "false_hit_rate": 0.05
+  },
+  "0.930": {
+    "hit_rate": 0.35,
+    "false_hit_rate": 0.05
+  },
+  "0.935": {
+    "hit_rate": 0.2,
+    "false_hit_rate": 0.0
+  },
+  "0.940": {
+    "hit_rate": 0.15,
+    "false_hit_rate": 0.0
+  },
+  "0.945": {
+    "hit_rate": 0.15,
+    "false_hit_rate": 0.0
+  },
+  "0.950": {
+    "hit_rate": 0.15,
+    "false_hit_rate": 0.0
+  },
+  "0.955": {
+    "hit_rate": 0.1,
+    "false_hit_rate": 0.0
+  },
+  "0.960": {
+    "hit_rate": 0.1,
+    "false_hit_rate": 0.0
+  },
+  "0.965": {
+    "hit_rate": 0.05,
+    "false_hit_rate": 0.0
+  },
+  "0.970": {
+    "hit_rate": 0.05,
+    "false_hit_rate": 0.0
+  },
+  "0.975": {
+    "hit_rate": 0.0,
+    "false_hit_rate": 0.0
+  },
+  "0.980": {
+    "hit_rate": 0.0,
+    "false_hit_rate": 0.0
+  },
+  "0.985": {
+    "hit_rate": 0.0,
+    "false_hit_rate": 0.0
+  },
+  "0.990": {
+    "hit_rate": 0.0,
+    "false_hit_rate": 0.0
+  },
+  "0.995": {
+    "hit_rate": 0.0,
+    "false_hit_rate": 0.0
+  }
+}

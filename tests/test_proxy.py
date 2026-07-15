@@ -5,7 +5,6 @@ from __future__ import annotations
 import json
 
 import httpx
-import pytest
 from asgi_lifespan import LifespanManager
 
 from tests.conftest import DEMO_KEY, RESTRICTED_KEY, auth, build_harness, chat_body

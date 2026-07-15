@@ -58,14 +58,15 @@ def main() -> int:
 
     rows: list[dict] = []
 
-    # 1,000 uniques from train only
-    uniques: list[str] = []
+    # 1,000 uniques from train only (dedupe as we go so we land on exactly 1000)
+    seen: dict[str, None] = {}
     i = 0
-    while len(uniques) < 1000:
+    while len(seen) < 1000:
         base = train_prompts[i % len(train_prompts)]
-        uniques.append(base if i < len(train_prompts) else surface_variant(base, i))
+        candidate = base if i < len(train_prompts) else surface_variant(base, i)
+        seen.setdefault(candidate, None)
         i += 1
-    uniques = list(dict.fromkeys(uniques))[:1000]
+    uniques = list(seen)
     rows += [{"kind": "unique", "prompt": p} for p in uniques]
 
     # 300 exact repeats

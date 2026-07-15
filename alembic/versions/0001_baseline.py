@@ -11,7 +11,6 @@ Create Date: 2026-07-14
 from __future__ import annotations
 
 from alembic import op
-
 from gateway.db import Base
 
 revision = "0001_baseline"

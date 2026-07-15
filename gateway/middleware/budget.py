@@ -20,11 +20,11 @@ WARN_FRACTION = 0.8
 
 
 def _today() -> str:
-    return dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%d")
+    return dt.datetime.now(dt.UTC).strftime("%Y-%m-%d")
 
 
 def _month() -> str:
-    return dt.datetime.now(dt.timezone.utc).strftime("%Y-%m")
+    return dt.datetime.now(dt.UTC).strftime("%Y-%m")
 
 
 class RedisBudgetGuard:

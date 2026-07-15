@@ -29,7 +29,7 @@ class SpendCapExceeded(Exception):
 
 
 def _today() -> str:
-    return dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%d")
+    return dt.datetime.now(dt.UTC).strftime("%Y-%m-%d")
 
 
 class SpendGuard:

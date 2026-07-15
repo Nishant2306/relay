@@ -74,9 +74,11 @@ class TestRoutingConfig:
             lambda c: c["tiers"][1].update(cache_threshold="sometimes"),
             lambda c: c["verification"].update(sample_rate=3.0),
         ):
+            from pydantic import ValidationError
+
             broken = yaml.safe_load(ROUTING_YAML.read_text(encoding="utf-8"))
             mutation(broken)
-            with pytest.raises(Exception):
+            with pytest.raises((ValidationError, ValueError)):
                 validate_config(broken)
         validate_config(good)  # unmutated passes
 

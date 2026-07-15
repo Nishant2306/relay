@@ -1,0 +1,453 @@
+{
+  "dataset_version": "1.1.0",
+  "embedding_model": "BAAI/bge-small-en-v1.5",
+  "matcher": "cosine threshold + answer-determining guards (gateway/cache/guards.py)",
+  "why_guards": {
+    "note": "raw cosine cannot separate this corpus; traps are designed lookalikes",
+    "test_hit_similarity": {
+      "min": 0.7417,
+      "median": 0.9114,
+      "max": 0.9715
+    },
+    "test_miss_similarity": {
+      "min": 0.7646,
+      "median": 0.9125,
+      "max": 0.9968
+    }
+  },
+  "guard_fires_on_test_misses": {
+    "content_substitution": 16,
+    "direction_swap": 3,
+    "number_mismatch": 11,
+    "inverse_pair": 6,
+    "negation_mismatch": 2,
+    "boolean_operator_swap": 1
+  },
+  "tuned_threshold": 0.755,
+  "tuning_protocol": "dev-only (40 pairs); reported numbers test-only (80 pairs); ADR-0009",
+  "dev": {
+    "hit_rate": 0.95,
+    "false_hit_rate": 0.05
+  },
+  "test": {
+    "hit_rate": 0.95,
+    "false_hit_rate": 0.025
+  },
+  "test_miss_phenomena": [
+    {
+      "phenomenon": "provider_swap",
+      "pairs": 1,
+      "wrong": 1,
+      "wrong_rate": 1.0,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "number_change",
+      "pairs": 4,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": true
+    },
+    {
+      "phenomenon": "entity_swap",
+      "pairs": 4,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "negation_flip",
+      "pairs": 2,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": true
+    },
+    {
+      "phenomenon": "unit_direction_swap",
+      "pairs": 2,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "entity_modifier_swap",
+      "pairs": 2,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "source_target_swap",
+      "pairs": 1,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": true
+    },
+    {
+      "phenomenon": "direction_flip",
+      "pairs": 1,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "temporal_boundary_flip",
+      "pairs": 1,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": true
+    },
+    {
+      "phenomenon": "aggregation_swap",
+      "pairs": 1,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": true
+    },
+    {
+      "phenomenon": "action_flip",
+      "pairs": 1,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "permission_flip",
+      "pairs": 1,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "platform_swap",
+      "pairs": 1,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "audience_swap",
+      "pairs": 1,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "object_swap",
+      "pairs": 1,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "dimension_swap",
+      "pairs": 1,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "version_swap",
+      "pairs": 1,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "position_swap",
+      "pairs": 1,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "constraint_swap",
+      "pairs": 1,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "join_type_swap",
+      "pairs": 1,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "state_swap",
+      "pairs": 1,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "algorithm_swap",
+      "pairs": 1,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "encoding_swap",
+      "pairs": 1,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "kind_swap",
+      "pairs": 1,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "policy_swap",
+      "pairs": 1,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "parameter_change",
+      "pairs": 1,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "format_swap",
+      "pairs": 1,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "filter_swap",
+      "pairs": 1,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "metric_swap",
+      "pairs": 1,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "boolean_operator_swap",
+      "pairs": 1,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "architecture_count_change",
+      "pairs": 1,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": false
+    }
+  ],
+  "test_hit_phenomena": [
+    {
+      "phenomenon": "word_order",
+      "pairs": 17,
+      "wrong": 1,
+      "wrong_rate": 0.059,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "synonym",
+      "pairs": 8,
+      "wrong": 1,
+      "wrong_rate": 0.125,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "politeness",
+      "pairs": 6,
+      "wrong": 1,
+      "wrong_rate": 0.167,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "acronym",
+      "pairs": 1,
+      "wrong": 1,
+      "wrong_rate": 1.0,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "framing",
+      "pairs": 15,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "verbosity",
+      "pairs": 5,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "punctuation",
+      "pairs": 3,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "quoting",
+      "pairs": 3,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "number_format",
+      "pairs": 3,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "definition_expansion",
+      "pairs": 2,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "domain_expansion",
+      "pairs": 2,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "padding",
+      "pairs": 1,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "symbol",
+      "pairs": 1,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "voice",
+      "pairs": 1,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "terminology",
+      "pairs": 1,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "hyphenation",
+      "pairs": 1,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "time_format",
+      "pairs": 1,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "capitalization",
+      "pairs": 1,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "label_order",
+      "pairs": 1,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "contraction",
+      "pairs": 1,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "morphology",
+      "pairs": 1,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "argument_order",
+      "pairs": 1,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "formatting",
+      "pairs": 1,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "abbreviation",
+      "pairs": 1,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": false
+    },
+    {
+      "phenomenon": "explicit_target",
+      "pairs": 1,
+      "wrong": 0,
+      "wrong_rate": 0.0,
+      "spec_family": false
+    }
+  ],
+  "known_hard_cases": [
+    {
+      "id": "cache-miss-002",
+      "split": "test",
+      "expected": "miss",
+      "similarity": 0.9858,
+      "guard": "content_substitution:safe/unsafe",
+      "outcome": "separates"
+    }
+  ],
+  "residual_test_false_hits": [
+    {
+      "id": "cache-miss-018",
+      "phenomena": [
+        "provider_swap"
+      ],
+      "similarity": 0.8538,
+      "prompt_a": "Deploy this service to AWS.",
+      "prompt_b": "Deploy this service to Google Cloud."
+    }
+  ]
+}
