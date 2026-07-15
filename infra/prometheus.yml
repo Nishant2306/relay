@@ -6,6 +6,10 @@ scrape_configs:
   - job_name: relay-gateway
     static_configs:
       - targets: ["gateway:8080"]
+  # the verifier is a separate process; its disagreement counters live there
+  - job_name: relay-verifier
+    static_configs:
+      - targets: ["verifier:8090"]
   - job_name: prometheus
     static_configs:
       - targets: ["localhost:9090"]

@@ -27,6 +27,7 @@ class Settings(BaseSettings):
     slack_webhook_url: str = ""
 
     admin_key: str = "relay-admin-dev-key"
+    verifier_metrics_port: int = 8090
     relay_host: str = "0.0.0.0"
     relay_port: int = 8080
     routing_config_path: str = "config/routing.yaml"

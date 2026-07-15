@@ -72,7 +72,8 @@
       "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe scripts\\\\seed_teams.py)",
       "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe scripts\\\\run_loadtest.py budget 2>&1)",
       "Bash(docker exec *)",
-      "Bash(docker compose *)"
+      "Bash(docker compose *)",
+      "Bash(gh run *)"
     ]
   }
 }

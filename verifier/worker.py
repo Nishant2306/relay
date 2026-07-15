@@ -107,11 +107,13 @@ class VerifierWorker:
 
 def main() -> None:
     import httpx
+    from prometheus_client import start_http_server
     from redis.asyncio import Redis
 
     from gateway.adapters import AnthropicAdapter, MockAdapter, OllamaAdapter, OpenAIAdapter
     from gateway.config import settings
     from gateway.db import make_engine, make_session_factory
+    from gateway.obs.metrics import RelayMetrics
     from gateway.router.routes import RoutingConfigStore
     from gateway.spend import SpendGuard
     from verifier.queue import RedisVerifyQueue
@@ -120,6 +122,13 @@ def main() -> None:
     logging.basicConfig(level=settings.log_level)
 
     async def _run() -> None:
+        # The verifier is its own process, so Prometheus needs a second scrape
+        # target — otherwise relay_verification_disagreements_total is counted
+        # here and never leaves the container.
+        metrics = RelayMetrics()
+        start_http_server(settings.verifier_metrics_port, registry=metrics.registry)
+        logger.info("verifier metrics on :%d/metrics", settings.verifier_metrics_port)
+
         redis = Redis.from_url(settings.redis_url)
         http = httpx.AsyncClient(timeout=httpx.Timeout(60.0, connect=5.0))
         spend = SpendGuard(settings.max_daily_spend_usd, redis=redis)
@@ -141,6 +150,7 @@ def main() -> None:
             top_model_key=lambda: store.config.tiers[3].chain[0],
             judge_model_key=lambda: store.config.verification.judge,
             agree_threshold=lambda: store.config.verification.agree_threshold,
+            metrics=metrics,
         )
         watch = asyncio.create_task(store.watch())
         try:

@@ -70,6 +70,11 @@ warn_redundant_casts = true
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]
+# tests/ and scripts/ are not installed packages, so `tests.conftest` and
+# `scripts.*` imports only resolve if the repo root is on sys.path. Bare
+# `pytest` does not add CWD (only `python -m pytest` does) — make it explicit
+# so both invocations behave the same locally and in CI.
+pythonpath = ["."]
 markers = [
     "integration: requires Docker (testcontainers Redis/Postgres) or live services",
     "slow: long-running (model downloads, load tests)",

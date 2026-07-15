@@ -85,10 +85,12 @@ services:
   verifier:
     build: .
     command: python -m verifier.worker
+    expose: ["8090"]          # Prometheus scrapes the worker's own counters
     environment:
       DATABASE_URL: postgresql+asyncpg://relay:relay@postgres:5432/relay
       REDIS_URL: redis://redis:6379/0
       MOCK_PROVIDER_URL: http://mockprovider:8100
+      MOCK_PROVIDER_B_URL: http://mockprovider-b:8101
       MAX_DAILY_SPEND_USD: "5.00"
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
