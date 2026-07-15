@@ -58,7 +58,10 @@
       "PowerShell(docker exec relay-redis-1 redis-cli FT._LIST)",
       "PowerShell(docker exec relay-redis-1 redis-cli LRANGE cache:simlog 0 5)",
       "PowerShell(docker exec relay-redis-1 redis-cli HGETALL cache:stats)",
-      "PowerShell(docker compose logs gateway --tail 30)"
+      "PowerShell(docker compose logs gateway --tail 30)",
+      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe scripts\\\\build_loadtest_corpus.py)",
+      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe scripts\\\\run_loadtest.py steady)",
+      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe -c \"import json; rows=[json.loads\\(l\\) for l in open\\('datasets/cache_traps.jsonl', encoding='utf-8'\\)]; r=[x for x in rows if x['id']=='cache-miss-050'][0]; print\\(r['phenomena']\\); print\\('A:', r['prompt_a']\\); print\\('B:', r['prompt_b']\\)\")"
     ]
   }
 }

@@ -33,8 +33,8 @@ from gateway.pipeline import CacheHit
 logger = logging.getLogger("relay.cache")
 
 # Dev-tuned (scripts/eval_cache_traps.py); routing.yaml overrides these at runtime.
-DEFAULT_THRESHOLDS: dict[int, float | None] = {1: 0.755, 2: 0.94, 3: None}
-DEFAULT_THRESHOLD_UNTIERED = 0.94
+DEFAULT_THRESHOLDS: dict[int, float | None] = {1: 0.755, 2: 0.755, 3: None}
+DEFAULT_THRESHOLD_UNTIERED = 0.94  # no tier info -> stay conservative
 NEAR_MISS_FLOOR = 0.85
 SIMLOG_KEY = "cache:simlog"
 SIMLOG_CAP = 20_000
