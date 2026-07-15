@@ -7,7 +7,7 @@ each miss to the cheapest model that can handle it (with an async LLM-judge
 watching for routing mistakes), and survives provider outages with retries,
 fallback chains, and circuit breakers — all observable in Prometheus/Grafana.
 
-Companion project: **[Argus](https://github.com/USERNAME/argus)** — the
+Companion project: **[Argus](https://github.com/Nishant2306/argus)** — the
 evaluation/observability platform. Relay is the *serving* layer (what did it
 cost, did it stay up); Argus is the *quality* layer (was the output good).
 
@@ -156,17 +156,21 @@ cache-correctness guarantees or integrated routing economics.
 ## Run it yourself
 
 ```bash
-git clone <repo> && cd relay
-python -m venv .venv && .venv/bin/pip install -e ".[dev]"
+git clone https://github.com/Nishant2306/relay && cd relay
+make install   # .venv + package + dev extras
 
 make up        # gateway + 2 chaos mocks + Redis 8 + Postgres + Prometheus + Grafana
-make seed      # demo teams (demo / loadtest / stormy)
-make train     # complexity classifier vs the 45.3% control
+make seed      # demo teams (demo / loadtest / stormy / spendy)
+make train     # complexity classifier vs the 46.0% control (reloads the gateway)
 make test      # unit + dataset contracts (no Docker needed)
 make loadtest  # steady/repeats/storm/budget scenarios + held-out trap replay
 make drill     # 3-minute provider outage — watch Grafana, expect zero 5xx
 make harvest   # print every number above from live telemetry
 ```
+
+`make up` blocks until the gateway is healthy (Alembic done), so `seed`
+straight after is safe. `make train` restarts the gateway because the
+classifier is loaded once at startup.
 
 Point any OpenAI client at it:
 

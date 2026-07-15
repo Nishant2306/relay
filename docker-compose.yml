@@ -64,6 +64,14 @@ services:
       SLACK_WEBHOOK_URL: ${SLACK_WEBHOOK_URL:-}
       ADMIN_KEY: ${ADMIN_KEY:-relay-admin-dev-key}
     ports: ["8080:8080"]
+    healthcheck:
+      # `make up` uses `compose --wait`, so this is what makes `make seed`
+      # safe to run immediately: it only passes once Alembic has finished.
+      test: ["CMD-SHELL", "python -c \"import urllib.request as u; u.urlopen('http://localhost:8080/health')\""]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 30s
     depends_on:
       redis: { condition: service_healthy }
       postgres: { condition: service_healthy }
