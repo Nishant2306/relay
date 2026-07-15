@@ -73,9 +73,17 @@ class VectorIndex:
             .return_fields("exact", "dist")
             .dialect(2)
         )
-        res = await self.redis.ft(INDEX_NAME).search(
-            query, query_params={"vec": embedding.astype(np.float32).tobytes()}
-        )
+        try:
+            res = await self.redis.ft(INDEX_NAME).search(
+                query, query_params={"vec": embedding.astype(np.float32).tobytes()}
+            )
+        except Exception as e:
+            if "not found" in str(e).lower():
+                # index vanished (FLUSHALL / redis restart) — recreate; FT.CREATE
+                # re-indexes existing cv:* keys, so treat this lookup as a miss
+                await self.ensure_index()
+                return []
+            raise
         out: list[tuple[str, float]] = []
         for doc in res.docs:
             similarity = 1.0 - float(doc.dist)

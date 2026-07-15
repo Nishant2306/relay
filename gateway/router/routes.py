@@ -121,7 +121,8 @@ class TierRouter(Router):
 
     def decide(self, request: ChatCompletionRequest) -> RouteDecision:
         config = self.store.config
-        tier, confidence = self.classifier.classify(request.full_prompt_text())
+        base_tier, confidence = self.classifier.classify(request.full_prompt_text())
+        tier = base_tier
         promoted = False
         if (
             confidence < config.classifier.min_confidence
@@ -132,5 +133,5 @@ class TierRouter(Router):
             promoted = True
         return RouteDecision(
             tier=tier, chain=list(config.tiers[tier].chain),
-            confidence=confidence, promoted=promoted,
+            confidence=confidence, promoted=promoted, base_tier=base_tier,
         )

@@ -45,7 +45,20 @@
       "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe -m pytest tests\\\\test_verifier.py tests\\\\test_resilience.py -q 2>$null)",
       "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe -m pytest tests\\\\test_admin.py -q 2>$null)",
       "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe -m pytest tests -q -m \"not integration and not slow\" 2>$null)",
-      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe scripts\\\\gen_dashboards.py)"
+      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe scripts\\\\gen_dashboards.py)",
+      "PowerShell(docker compose build 2>&1)",
+      "PowerShell(docker compose up -d 2>&1)",
+      "PowerShell(docker compose ps --format \"table {{.Name}}\\\\t{{.Status}}\")",
+      "PowerShell(docker ps --format \"{{.Names}} {{.Ports}}\" | Select-String \"5432|6379\"; Get-NetTCPConnection -LocalPort 5432 -State Listen -ErrorAction SilentlyContinue | Select-Object -First 3 OwningProcess | ForEach-Object { Get-Process -Id $_.OwningProcess | Select-Object ProcessName, Id })",
+      "PowerShell(docker compose logs gateway --tail 15)",
+      "PowerShell(docker compose logs gateway --tail 8)",
+      "PowerShell(docker compose down)",
+      "PowerShell(docker ps -a --format \"{{.Names}} {{.Ports}}\" | Select-String \"8100\"; Get-NetTCPConnection -LocalPort 8100 -State Listen -ErrorAction SilentlyContinue | ForEach-Object { Get-Process -Id $_.OwningProcess | Select-Object ProcessName, Id })",
+      "PowerShell(docker compose up -d --build 2>&1)",
+      "PowerShell(docker exec relay-redis-1 redis-cli FT._LIST)",
+      "PowerShell(docker exec relay-redis-1 redis-cli LRANGE cache:simlog 0 5)",
+      "PowerShell(docker exec relay-redis-1 redis-cli HGETALL cache:stats)",
+      "PowerShell(docker compose logs gateway --tail 30)"
     ]
   }
 }

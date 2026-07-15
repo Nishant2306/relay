@@ -73,7 +73,9 @@ _CREATIVE_CUES = re.compile(
 )
 
 _QUESTION_START = re.compile(
-    r"^\s*(what|who|when|where|why|how|is|are|does|do|can|will|which|should)\b",
+    r"^\s*(please\s+|could you\s+|can you\s+|would you\s+)?"
+    r"(explain\s+)?(what|who|when|where|why|how|is|are|does|do|can|could|will|"
+    r"which|should|tell me)\b",
     re.IGNORECASE,
 )
 

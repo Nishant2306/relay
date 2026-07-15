@@ -20,6 +20,10 @@ PRICING_PER_MTOK: dict[str, tuple[float, float]] = {
     "mock/cheap-a": (0.15, 0.60),
     "mock/mid-b": (0.80, 4.00),
     "mock/top-c": (2.50, 10.00),
+    # Alternate mock instance (fallback target in outage drills).
+    "mockb/cheap-a": (0.15, 0.60),
+    "mockb/mid-b": (0.80, 4.00),
+    "mockb/top-c": (2.50, 10.00),
 }
 
 FLAGSHIP_MODEL = "openai/gpt-4o"

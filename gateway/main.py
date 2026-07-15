@@ -46,7 +46,13 @@ def build_production_deps(cfg: Settings) -> Deps:
     """Wire real infrastructure. Clients are lazy — nothing connects here."""
     from redis.asyncio import Redis
 
-    from gateway.adapters import AnthropicAdapter, MockAdapter, OllamaAdapter, OpenAIAdapter
+    from gateway.adapters import (
+        AnthropicAdapter,
+        MockAdapter,
+        MockBAdapter,
+        OllamaAdapter,
+        OpenAIAdapter,
+    )
     from gateway.db import make_engine, make_session_factory
     from gateway.middleware.auth import PostgresTeamStore
     from gateway.obs.logging import PostgresRequestLogger
@@ -60,6 +66,10 @@ def build_production_deps(cfg: Settings) -> Deps:
 
     registry = ProviderRegistry()
     registry.register(MockAdapter(http_client, spend_guard, base_url=cfg.mock_provider_url))
+    if cfg.mock_provider_b_url:
+        registry.register(
+            MockBAdapter(http_client, spend_guard, base_url=cfg.mock_provider_b_url)
+        )
     registry.register(OllamaAdapter(http_client, spend_guard, base_url=cfg.ollama_base_url))
     if cfg.openai_api_key:
         registry.register(OpenAIAdapter(

@@ -4,10 +4,12 @@
 # answer-determining guards active; 0.94 is the dev zero-false-hit point,
 # used for tier 2 where wrong answers cost more. Tier 3 semantic matching is
 # disabled outright (exact repeats still hit).
+# Chains never downgrade (ADR-0007): same-tier alternate provider first
+# (mockb = second mock instance, the outage-drill fallback), then tier+1.
 tiers:
-  1: { chain: [mock/cheap-a, ollama/llama3.1-8b], cache_threshold: 0.755 }
-  2: { chain: [mock/mid-b, mock/cheap-a], cache_threshold: 0.94 }
-  3: { chain: [mock/top-c, mock/mid-b], cache_threshold: disabled }
+  1: { chain: [mock/cheap-a, mockb/cheap-a, mock/mid-b], cache_threshold: 0.755 }
+  2: { chain: [mock/mid-b, mockb/mid-b, mock/top-c], cache_threshold: 0.94 }
+  3: { chain: [mock/top-c, mockb/top-c], cache_threshold: disabled }
 
 classifier:
   min_confidence: 0.6

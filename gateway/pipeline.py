@@ -44,10 +44,18 @@ class CallMeta(BaseModel):
 
 
 class RouteDecision(BaseModel):
-    tier: int
+    tier: int  # tier actually routed (after fail-safe promotion)
     chain: list[str]
     confidence: float
     promoted: bool = False
+    # The classifier's base estimate BEFORE promotion. The cache threshold
+    # keys off this: promotion expresses routing caution (serve with a better
+    # model), not increased cache-match risk — a promoted tier-1 paraphrase
+    # should still match at the tier-1 threshold. (See ADR-0007 notes.)
+    base_tier: int | None = None
+
+    def cache_tier(self) -> int:
+        return self.base_tier if self.base_tier is not None else self.tier
 
 
 class LimitDecision(BaseModel):
@@ -217,10 +225,11 @@ class Pipeline:
                 span.set_attribute("relay.confidence", route.confidence)
         tier = route.tier if route else None
 
-        # [4] cache lookup
+        # [4] cache lookup (threshold keyed to the base tier, not the promoted one)
         if self.cache is not None and team.cache_scope != "off":
+            cache_tier = route.cache_tier() if route else None
             with tracer.start_as_current_span("relay.cache_lookup"):
-                hit = await self.cache.lookup(request, team, tier)
+                hit = await self.cache.lookup(request, team, cache_tier)
             if hit is not None:
                 overhead_ms = int((time.perf_counter() - started) * 1000)
                 counterfactual = counterfactual_cost_usd(hit.tokens_in, hit.tokens_out)
