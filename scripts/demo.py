@@ -63,7 +63,7 @@ def show(label: str, prompt: str, r: httpx.Response) -> None:
     print(f"  result   {verdict}   {BOLD}{r.wall_ms} ms{OFF}")  # type: ignore[attr-defined]
     print(f"  served   {model}  (tier {tier})   cost ${cost:.6f}")
     if sim:
-        print(f"  {GREEN}similarity {sim}{OFF}  <- matched a different wording of the same question")
+        print(f"  {GREEN}similarity {sim}{OFF}  <- same question, different words")
 
 
 def beat_cache(client: httpx.Client) -> None:
@@ -92,8 +92,8 @@ def beat_cache(client: httpx.Client) -> None:
     show("THE TRAP -> must NOT hit", "Convert 20 Fahrenheit to Celsius.", r)
     if r.headers.get("x-relay-cache") == "miss":
         print(f"\n  {GREEN}{BOLD}Correctly a MISS.{OFF} Cosine similarity said 0.995 — 'serve the")
-        print(f"  cached answer'. The direction-swap guard overruled it. That is the")
-        print(f"  difference between a cache and a wrong answer.{OFF}")
+        print("  cached answer'. The direction-swap guard overruled it. That is the")
+        print("  difference between a cache and a wrong answer.")
     else:
         print(f"\n  {RED}FALSE HIT — the guard did not fire. Investigate before recording.{OFF}")
 
