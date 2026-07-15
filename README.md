@@ -1,5 +1,8 @@
 # Relay — Cost-Optimizing LLM Gateway with Semantic Caching
 
+[![ci](https://github.com/Nishant2306/relay/actions/workflows/ci.yml/badge.svg)](https://github.com/Nishant2306/relay/actions/workflows/ci.yml)
+[![datasets](https://img.shields.io/badge/datasets-relay--datasets--v1.1.0%20(frozen)-blue)](datasets/TIERING_RUBRIC.md)
+
 **One-liner:** an OpenAI-compatible gateway — change one base URL — that enforces
 per-team rate limits and dollar budgets, answers repeated and *paraphrased*
 requests instantly from a semantic cache that refuses lookalike traps, routes
