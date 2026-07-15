@@ -2,9 +2,9 @@
 
 `create_app(deps=...)` lets tests inject an in-memory team store, a mock
 adapter bound to an in-process chaos provider, and a null request logger.
-Production wiring (`build_production_deps`) connects Redis, Postgres, and all
-configured providers; components that land in later milestones (cache, router,
-resilience, verifier) attach to the same Deps object.
+With no injected deps, full production wiring happens at construction time
+(gateway/bootstrap.py); anything needing a running loop initializes in the
+lifespan.
 """
 
 from __future__ import annotations
@@ -16,8 +16,8 @@ from dataclasses import dataclass, field
 from typing import Any
 
 import httpx
-from fastapi import Depends, FastAPI, Request
-from fastapi.responses import JSONResponse, Response
+from fastapi import Depends, FastAPI, Request, Response
+from fastapi.responses import JSONResponse
 
 from gateway.config import Settings, settings
 from gateway.middleware.auth import TeamStore, authenticate, check_model_allowed
@@ -43,7 +43,7 @@ class Deps:
 
 
 def build_production_deps(cfg: Settings) -> Deps:
-    """Wire real infrastructure. Called from the lifespan, once per process."""
+    """Wire real infrastructure. Clients are lazy — nothing connects here."""
     from redis.asyncio import Redis
 
     from gateway.adapters import AnthropicAdapter, MockAdapter, OllamaAdapter, OpenAIAdapter
@@ -86,29 +86,38 @@ def build_production_deps(cfg: Settings) -> Deps:
 
 
 def create_app(deps: Deps | None = None) -> FastAPI:
+    production = deps is None
+    if production:
+        from gateway.bootstrap import attach_runtime_components
+        from gateway.obs.otel import setup_tracing
+
+        setup_tracing()
+        deps = build_production_deps(settings)
+        attach_runtime_components(deps, settings)
+    if deps.pipeline is None:
+        deps.pipeline = Pipeline(deps.registry, deps.request_logger)
+
     @asynccontextmanager
     async def lifespan(app: FastAPI):
-        d = deps
-        if d is None:
-            d = build_production_deps(settings)
-            attach_runtime_components(d)
-        if d.pipeline is None:
-            d.pipeline = Pipeline(d.registry, d.request_logger)
-        app.state.deps = d
-        app.state.team_store = d.team_store
-        app.state.pipeline = d.pipeline
+        for coro in deps.extras.get("async_init", []):
+            await coro
+        for factory in deps.extras.get("task_factories", []):
+            deps.background_tasks.append(factory())
+        app.state.deps = deps
+        app.state.team_store = deps.team_store
+        app.state.pipeline = deps.pipeline
         try:
             yield
         finally:
-            await d.pipeline.drain()
-            for task in d.background_tasks:
+            await deps.pipeline.drain()
+            for task in deps.background_tasks:
                 task.cancel()
-            if d.http_client is not None:
-                await d.http_client.aclose()
-            if d.redis is not None:
-                await d.redis.aclose()
-            if d.engine is not None:
-                await d.engine.dispose()
+            if deps.http_client is not None:
+                await deps.http_client.aclose()
+            if deps.redis is not None:
+                await deps.redis.aclose()
+            if deps.engine is not None:
+                await deps.engine.dispose()
 
     app = FastAPI(title="relay", lifespan=lifespan)
 
@@ -116,9 +125,16 @@ def create_app(deps: Deps | None = None) -> FastAPI:
     async def health() -> dict[str, str]:
         return {"status": "ok"}
 
+    @app.get("/metrics")
+    async def metrics() -> Response:
+        relay_metrics = deps.extras.get("metrics")
+        if relay_metrics is None:
+            return Response("# no metrics wired\n", media_type="text/plain")
+        return Response(relay_metrics.export(), media_type="text/plain; version=0.0.4")
+
     @app.get("/v1/models")
     async def models(team: TeamContext = Depends(authenticate)) -> dict[str, Any]:
-        registry: ProviderRegistry = app.state.deps.registry
+        registry: ProviderRegistry = deps.registry
         data = [
             {"id": key, "object": "model", "created": 0, "owned_by": "relay"}
             for key in sorted(registry.available_models())
@@ -149,16 +165,30 @@ def create_app(deps: Deps | None = None) -> FastAPI:
         )
         return response
 
+    if "routing_store" in deps.extras:
+        from admin.api import create_admin_router
+
+        session_factory = deps.extras.get("session_factory")
+
+        async def audit(actor: str, path: str, old: Any, new: Any) -> None:
+            if session_factory is None:
+                logger.info("audit (no db): %s %s", actor, path)
+                return
+            from gateway.db import ConfigAudit
+
+            async with session_factory() as session:
+                session.add(ConfigAudit(actor=actor, path=path, old=old, new=new))
+                await session.commit()
+
+        app.include_router(create_admin_router(
+            admin_key=deps.extras.get("admin_key", settings.admin_key),
+            routing_store=deps.extras["routing_store"],
+            audit=deps.extras.get("audit_writer", audit),
+            cache=deps.extras.get("cache"),
+            session_factory=session_factory,
+        ))
+
     return app
 
 
-def attach_runtime_components(deps: Deps) -> None:
-    """Attach M2/M3 components (limits, budgets, cache, router, resilience).
-
-    Implemented incrementally; safe to call when subsystems are unavailable —
-    each component degrades to None and the pipeline skips it.
-    """
-    # Populated in later milestones (see gateway/bootstrap.py once it exists).
-
-
-app = create_app()
+# Run with: uvicorn "gateway.main:create_app" --factory  (docker-compose does)

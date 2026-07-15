@@ -20,6 +20,7 @@ from typing import Any, Protocol
 
 from fastapi import HTTPException
 from fastapi.responses import JSONResponse, Response, StreamingResponse
+from opentelemetry import trace
 from pydantic import BaseModel
 
 from gateway.adapters.base import AdapterError, StreamCollector
@@ -30,6 +31,7 @@ from gateway.registry import ProviderRegistry
 from gateway.spend import SpendCapExceeded
 
 logger = logging.getLogger("relay.pipeline")
+tracer = trace.get_tracer("relay")
 
 AUTO_MODELS = {"auto", "relay-auto"}
 
@@ -207,12 +209,18 @@ class Pipeline:
                 )
 
         # [5] classify (cheap; also feeds the cache threshold + verification)
-        route: RouteDecision | None = self.router.decide(request) if self.router else None
+        route: RouteDecision | None = None
+        if self.router is not None:
+            with tracer.start_as_current_span("relay.classify") as span:
+                route = self.router.decide(request)
+                span.set_attribute("relay.tier", route.tier)
+                span.set_attribute("relay.confidence", route.confidence)
         tier = route.tier if route else None
 
         # [4] cache lookup
         if self.cache is not None and team.cache_scope != "off":
-            hit = await self.cache.lookup(request, team, tier)
+            with tracer.start_as_current_span("relay.cache_lookup"):
+                hit = await self.cache.lookup(request, team, tier)
             if hit is not None:
                 overhead_ms = int((time.perf_counter() - started) * 1000)
                 counterfactual = counterfactual_cost_usd(hit.tokens_in, hit.tokens_out)
@@ -220,7 +228,9 @@ class Pipeline:
                     self.metrics.request(team.name, hit.model_key, tier, "hit", 200)
                     self.metrics.cache_hit(hit.kind, hit.similarity)
                     self.metrics.cost(team.name, 0.0, counterfactual)
+                    self.metrics.saved(team.name, "cache", counterfactual)
                     self.metrics.overhead(overhead_ms / 1000)
+                    self.metrics.latency("/v1/chat/completions", "hit", overhead_ms / 1000)
                 self._post(self.request_logger.log(RequestLogEntry(
                     team_id=team.team_id, model_requested=request.model,
                     model_served=hit.model_key, provider=hit.model_key.split("/", 1)[0],
@@ -312,7 +322,8 @@ class Pipeline:
 
     async def _finish(self, request: ChatCompletionRequest, team: TeamContext,
                       result: AdapterResult, meta: CallMeta, tier: int | None,
-                      overhead_ms: int, est_tokens: int) -> None:
+                      overhead_ms: int, est_tokens: int,
+                      chain: list[str] | None = None) -> None:
         """Post-response bookkeeping shared by stream + non-stream paths."""
         counterfactual = counterfactual_cost_usd(
             result.usage.prompt_tokens, result.usage.completion_tokens
@@ -324,9 +335,13 @@ class Pipeline:
         if self.metrics:
             self.metrics.request(team.name, meta.model_key, tier, "miss", 200)
             self.metrics.cost(team.name, result.cost_usd, counterfactual)
+            self.metrics.saved(team.name, "routing", counterfactual - result.cost_usd)
             self.metrics.overhead(overhead_ms / 1000)
-            if meta.fallback_used:
-                self.metrics.fallback(meta.model_key)
+            self.metrics.latency(
+                "/v1/chat/completions", "miss", (overhead_ms + result.latency_ms) / 1000
+            )
+            if meta.fallback_used and chain:
+                self.metrics.fallback(chain[0], meta.model_key)
         log_id = await self.request_logger.log(RequestLogEntry(
             team_id=team.team_id, model_requested=request.model, model_served=meta.model_key,
             provider=result.provider, tier=tier, cache="miss",
@@ -352,10 +367,15 @@ class Pipeline:
                 logger.exception("verifier enqueue failed")
 
     async def _respond_json(self, request, team, chain, tier, started, est_tokens) -> Response:
-        result, meta = await self.caller.call(chain, request)
+        with tracer.start_as_current_span("relay.provider_call") as span:
+            result, meta = await self.caller.call(chain, request)
+            span.set_attribute("relay.model", meta.model_key)
+            span.set_attribute("relay.retries", meta.retries)
+            span.set_attribute("relay.fallback", meta.fallback_used)
         total_ms = int((time.perf_counter() - started) * 1000)
         overhead_ms = max(0, total_ms - result.latency_ms)
-        self._post(self._finish(request, team, result, meta, tier, overhead_ms, est_tokens))
+        self._post(self._finish(request, team, result, meta, tier, overhead_ms, est_tokens,
+                                chain))
         return JSONResponse(
             result.response, headers=self._headers(meta, tier, result.cost_usd, overhead_ms)
         )
@@ -404,7 +424,7 @@ class Pipeline:
             if collector.complete():
                 result = await adapter.finalize_stream(request, model, collector, latency_ms)
                 self._post(self._finish(
-                    request, team, result, meta, tier, overhead_ms, est_tokens
+                    request, team, result, meta, tier, overhead_ms, est_tokens, chain
                 ))
             else:
                 await self._release_singleflight(request, team)

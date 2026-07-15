@@ -22,6 +22,7 @@ class Settings(BaseSettings):
     max_daily_spend_usd: float = 5.00
     slack_webhook_url: str = ""
 
+    admin_key: str = "relay-admin-dev-key"
     relay_host: str = "0.0.0.0"
     relay_port: int = 8080
     routing_config_path: str = "config/routing.yaml"

@@ -1,0 +1,107 @@
+# Relay full stack (SPEC §3.12): make up
+services:
+  redis:
+    image: redis:8
+    ports: ["6379:6379"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 3s
+      timeout: 2s
+      retries: 10
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: relay
+      POSTGRES_PASSWORD: relay
+      POSTGRES_DB: relay
+    ports: ["5432:5432"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U relay"]
+      interval: 3s
+      timeout: 2s
+      retries: 15
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  mockprovider:
+    build: .
+    command: uvicorn mockprovider.app:app --host 0.0.0.0 --port 8100
+    ports: ["8100:8100"]
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request as u; u.urlopen('http://localhost:8100/health')\""]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  gateway:
+    build: .
+    command: >
+      sh -c "alembic upgrade head &&
+             uvicorn gateway.main:create_app --factory --host 0.0.0.0 --port 8080"
+    environment:
+      DATABASE_URL: postgresql+asyncpg://relay:relay@postgres:5432/relay
+      DATABASE_URL_SYNC: postgresql+psycopg2://relay:relay@postgres:5432/relay
+      REDIS_URL: redis://redis:6379/0
+      MOCK_PROVIDER_URL: http://mockprovider:8100
+      OLLAMA_BASE_URL: http://host.docker.internal:11434
+      MAX_DAILY_SPEND_USD: "5.00"
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      SLACK_WEBHOOK_URL: ${SLACK_WEBHOOK_URL:-}
+      ADMIN_KEY: ${ADMIN_KEY:-relay-admin-dev-key}
+    ports: ["8080:8080"]
+    depends_on:
+      redis: { condition: service_healthy }
+      postgres: { condition: service_healthy }
+      mockprovider: { condition: service_healthy }
+    volumes:
+      - ./config:/app/config           # hot-reload demo: edit routing.yaml live
+      - ./models:/app/models           # trained classifier from `make train`
+      - fastembed:/app/.fastembed_cache
+
+  verifier:
+    build: .
+    command: python -m verifier.worker
+    environment:
+      DATABASE_URL: postgresql+asyncpg://relay:relay@postgres:5432/relay
+      REDIS_URL: redis://redis:6379/0
+      MOCK_PROVIDER_URL: http://mockprovider:8100
+      MAX_DAILY_SPEND_USD: "5.00"
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+    depends_on:
+      gateway: { condition: service_started }
+    volumes:
+      - ./config:/app/config
+
+  prometheus:
+    image: prom/prometheus:v2.53.0
+    ports: ["9090:9090"]
+    volumes:
+      - ./infra/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+
+  grafana:
+    image: grafana/grafana:11.1.0
+    ports: ["3000:3000"]
+    environment:
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Admin
+      GF_AUTH_DISABLE_LOGIN_FORM: "true"
+    volumes:
+      - ./infra/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./infra/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    depends_on: [prometheus]
+
+  # optional local models: docker compose --profile ollama up
+  ollama:
+    image: ollama/ollama:latest
+    profiles: [ollama]
+    ports: ["11434:11434"]
+    volumes:
+      - ollama:/root/.ollama
+
+volumes:
+  pgdata:
+  fastembed:
+  ollama:
