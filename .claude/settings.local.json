@@ -70,7 +70,9 @@
       "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe -m ruff check .)",
       "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe -m mypy gateway verifier mockprovider admin 2>&1)",
       "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe scripts\\\\seed_teams.py)",
-      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe scripts\\\\run_loadtest.py budget 2>&1)"
+      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe scripts\\\\run_loadtest.py budget 2>&1)",
+      "Bash(docker exec *)",
+      "Bash(docker compose *)"
     ]
   }
 }

@@ -50,7 +50,12 @@ class VectorIndex:
                 ),
             ]
             definition = IndexDefinition(prefix=[VECTOR_PREFIX], index_type=IndexType.HASH)
-            await self.redis.ft(INDEX_NAME).create_index(schema, definition=definition)
+            try:
+                await self.redis.ft(INDEX_NAME).create_index(schema, definition=definition)
+            except Exception as e:
+                # concurrent self-heal: another worker won the FT.CREATE race
+                if "already exists" not in str(e).lower():
+                    raise
 
     async def add(self, namespace: str, exact: str, embedding: np.ndarray,
                   model_key: str, ttl_s: int) -> None:

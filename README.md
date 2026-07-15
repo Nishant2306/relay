@@ -49,13 +49,13 @@ gaps).
 | Steady load (50% unique / 30% repeat / 20% paraphrase) | **~40 RPS, zero failures, 82.9% hit rate** (2,513 exact / 2,403 semantic) | 120 s Locust run vs the chaos mock |
 | Repeat-heavy convergence | hit rate converges to **96%** | 25-prompt hot set, 90 s |
 | Classifier accuracy | **61.9%** vs **46.0%** length-only control (+15.9 pp) | group-aware frozen split, test fold evaluated once; all confusions adjacent-tier, zero 1↔3 |
-| Gateway overhead (exact cache hit) | **~4 ms** end-to-end | live demo measurement; p50/p95/p99 under load via `make harvest` |
+| Gateway overhead under load | **p50 3.6 ms / p95 9.8 ms / p99 29.6 ms** (target p50 < 10 ms) | Prometheus histogram across the load scenarios; exact hits serve end-to-end in ~4 ms |
 | Rate-limit storm | 1,618 clean 429s, **100% with Retry-After**; innocent team on the same gateway: **zero 429s** | one team at 5× its 60 RPM limit |
 | Rate-limit correctness | 120-burst at 60 RPM → ~60 accepted; 50 parallel clients, zero over-admission | property test vs real Redis (testcontainers) |
 | Budget exhaustion | 274 requests served → cap hit → 526 clean `budget_exhausted` blocks | $0.25 daily cap, cache disabled, Slack warn at 80% |
-| Outage drill | **zero client-visible 5xx** during a 3-minute primary-provider kill | `make drill`: breaker opens, chain falls back to the alternate provider, auto-recovers |
+| Outage drill | 12,838 requests, **zero client-visible errors** through a verified 3-minute primary kill; **669 served via fallback**; breakers open in <2 s, probe every 30 s, auto-close on recovery | `make drill` — cold cache, provider `/health` asserted down during the window |
 | Singleflight | 10 concurrent identical misses → **1 upstream call** | integration test vs real Redis |
-| Savings vs flagship | reported by `make harvest`, attributed **cache vs routing separately** (ADR-0008) | counterfactual = every request priced at gpt-4o rates |
+| Savings vs flagship | **91.0%** across 67k logged requests (87.7% cumulative hit rate), attributed separately: **$50.17 cache / $1.86 down-routing** (ADR-0008, never blended) | counterfactual = every request priced at gpt-4o rates; simulated workload |
 
 ### The finding worth reading twice
 

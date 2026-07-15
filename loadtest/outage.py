@@ -21,7 +21,8 @@ from locust import HttpUser, between, events, task
 
 from loadtest.common import LOADTEST_KEY, RESULTS_DIR, chat_body, headers, load_corpus
 
-MOCK_ADMIN = os.environ.get("MOCK_PROVIDER_URL", "http://localhost:8100")
+# host port 8200 (Argus owns 8100 on this machine — see docker-compose.yml)
+MOCK_ADMIN = os.environ.get("MOCK_PROVIDER_URL", "http://localhost:8200")
 OUTAGE_START_S = 30
 OUTAGE_END_S = 210
 
@@ -31,8 +32,13 @@ timeline: list[dict] = []
 
 
 def _set_chaos(hard_down: bool) -> None:
-    httpx.post(f"{MOCK_ADMIN}/chaos", json={"hard_down": hard_down}, timeout=10)
-    timeline.append({"t": time.time(), "hard_down": hard_down})
+    # fail LOUDLY if the chaos toggle hits the wrong service — a drill that
+    # never actually kills the provider proves nothing
+    resp = httpx.post(f"{MOCK_ADMIN}/chaos", json={"hard_down": hard_down}, timeout=10)
+    resp.raise_for_status()
+    health = httpx.get(f"{MOCK_ADMIN}/health", timeout=10).json()["status"]
+    assert health == ("down" if hard_down else "ok"), f"chaos toggle ineffective: {health}"
+    timeline.append({"t": time.time(), "hard_down": hard_down, "provider_health": health})
 
 
 @events.test_start.add_listener
