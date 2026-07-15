@@ -73,7 +73,8 @@
       "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe scripts\\\\run_loadtest.py budget 2>&1)",
       "Bash(docker exec *)",
       "Bash(docker compose *)",
-      "Bash(gh run *)"
+      "Bash(gh run *)",
+      "PowerShell($scratch = \"C:\\\\Users\\\\nisha\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-nisha-Desktop-Project-relay\\\\277820c0-0fcb-4b02-a475-3d8338809eac\\\\scratchpad\"; Remove-Item \"$scratch\\\\cleanclone\" -Recurse -Force -ErrorAction SilentlyContinue; Set-Location C:\\\\Users\\\\nisha\\\\Desktop\\\\Project\\\\relay; Write-Host \"=== working tree ===\"; git status --short; Write-Host \"=== local vs remote ===\"; git log --oneline origin/master..HEAD; Write-Host \"\\(empty above = fully pushed\\)\"; Write-Host \"=== stack ===\"; docker compose ps --format \"{{.Name}} {{.Status}}\")"
     ]
   }
 }
