@@ -57,6 +57,14 @@ gaps).
 | Singleflight | 10 concurrent identical misses → **1 upstream call** | integration test vs real Redis |
 | Savings vs flagship | **91.0%** across 67k logged requests (87.7% cumulative hit rate), attributed separately: **$50.17 cache / $1.86 down-routing** (ADR-0008, never blended) | counterfactual = every request priced at gpt-4o rates; simulated workload |
 
+![Relay Business dashboard: cumulative $ saved split cache vs routing, actual vs
+counterfactual spend, spend by team, cache hit rate, hits by kind, and
+verification disagreements by tier](docs/img/grafana-business.png)
+
+*Business dashboard under `make loadtest`. The savings panel keeps cache and
+routing separate on purpose (ADR-0008) — cache does the heavy lifting because
+it absorbs traffic before the router ever sees it.*
+
 ### The finding worth reading twice
 
 Cosine similarity **cannot** power a safe semantic cache by itself. On the
